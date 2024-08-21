@@ -1,0 +1,13 @@
+html {% extends 'blog/base.html' %} {% block content %}
+<h2>{{ post.title }}</h2>
+<p>{{ post.content }}</p>
+<a href="{% url 'post_edit' pk=post.pk %}">Edit</a> |
+<form
+  action="{% url 'post_delete' pk=post.pk %}"
+  method="post"
+  style="display: inline"
+>
+  {% csrf_token %}
+  <button type="submit">Delete</button>
+</form>
+{% endblock %}
