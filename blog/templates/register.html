@@ -1,14 +1,12 @@
 {% extends 'blog/base.html' %}
 {% load static %}
-
 {% block content %}
-<h2 class="form title">Login</h2>
+
+<h2 class="form.title">Register</h2>
 <div class="form-container">
   <form method="POST">
     {% csrf_token %} {{ form.as_p }}
-    <button type="submit">login</button>
-    <a href="{% url 'register' %}">Register</a>
   </form>
-</div>
+</div> 
 
 {% endblock content %}

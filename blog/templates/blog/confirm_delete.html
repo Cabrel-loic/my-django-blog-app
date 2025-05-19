@@ -1,0 +1,6 @@
+<form method = "post">
+    {% csrf_token %}
+    <p>Are you sure you wanna delete "{{ post.title }}"?</p>
+    <button type = "submit">Yes</button>
+    <a href="{% url 'post_detail' pk = post.pk %}">No, Cancel</a>
+</form>

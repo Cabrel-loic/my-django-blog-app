@@ -1,6 +1,9 @@
-html {% extends 'blog/base.html' %} {% block content %}
+{% extends 'blog/base.html' %} {% block content %}
 <h2>{{ post.title }}</h2>
 <p>{{ post.content }}</p>
+{% if post.image %}
+  <img src="{{ post.image.url }}" alt="post image" style="max-width: 100%;">
+{% endif %}
 <a href="{% url 'post_edit' pk=post.pk %}">Edit</a> |
 <form
   action="{% url 'post_delete' pk=post.pk %}"
@@ -8,6 +11,52 @@ html {% extends 'blog/base.html' %} {% block content %}
   style="display: inline"
 >
   {% csrf_token %}
-  <button type="submit">Delete</button>
+  <button type="submit" onclick="return confirm('Are you sure you wanna delete this post?')">Delete</button>
+  <br>
 </form>
+
+
+    <!-- comment section -->
+<div class="comment">
+  <h3> Comments </h3>
+
+  {% for comment in comments %}
+
+  <p><strong>{{ comment.user.username }}</strong>: {{ comment.body }}</p>
+  {% empty %}
+    <p>Be the first to comment</p>
+
+  {% endfor %}
+
+  {% if user.is_authenticated %}
+    <h4>Leave a comment:</h4>
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+
+      <button type="submit">Add comment</button>
+    </form>
+  {% else %}
+  
+    <p><a href="{% url 'login' %}">Login</a>to comment.</p>
+  {% endif %}
+</div>
+
+
+<!-- like section -->
+
+<div class="likes">
+  <form action="{% url 'like_post' post.pk %}" method="POST">
+      {% csrf_token %}
+      <button type="submit">
+        {% if user in post.likes.all %}
+        unlike
+        {% else %}
+        Like 
+        {% endif %}
+        ({{ post.total_likes }})
+      </button>
+    </form>
+</div>
+
 {% endblock %}

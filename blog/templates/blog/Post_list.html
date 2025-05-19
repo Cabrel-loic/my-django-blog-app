@@ -1,11 +1,58 @@
 {% extends 'blog/base.html' %} {% block content %}
-<h2>Post</h2>
-<ul>
-  {% for post in posts %}
-  <p><a href="{% url 'post_detail' pk=post.pk %}">{{ Post.title }}</a></p>
-  <p>{{post.title}}</p>
-  <p>{{post.content}}</p>
+<h2>Posts</h2>
+
+
+  <form method="get" action="{% url 'post_list' %}">
+    <input type="text" name="q" placeholder="Search..." value="{{ request.GET.q }}">
+    <button type="submit">Search</button>
+  </form>
+
+  {% for post in page_obj %}
+  
+  <div class="post">
+    <strong>{{ post.title }}</strong>
+    <p>{{ post.content | truncatewords:10 }}</p>
+    {% if post.image %}
+    <img src="{{ post.image.url }}" alt="post image" style="max-width: 100%;">
+    {% endif %}
+    <a href="{% url 'post_detail' post.pk %}">See details</a>
+    <!-- likes implementation -->
+    <form action="{% url 'like_post' post.pk %}" method="POST">
+      {% csrf_token %}
+      <button type="submit">
+        {% if user in post.likes.all %}
+        unlike
+        {% else %}
+        Like 
+        {% endif %}
+        ({{ post.total_likes }})
+      </button>
+    </form>
+  </div>
+<!-- what if post list is empty? -->
+  {% empty %}
+    <p>No more posts</p>
   {% endfor %}
-</ul>
-<a href="{% url 'post_create' %}">Create new post</a>
-{% endblock %}
+
+<br>
+<!-- pagination -->
+<div class="paginator">
+  {% if page_obj.has_previous %}
+  <a href="?{% if query %}q={{ query }}&{% endif %}page=1">First</a>
+  <a href="?{% if query %}q={{ query }}&{% endif %}page={{ page_obj.previous_page_number }}">Previous</a>
+  {% endif %}
+
+  <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+  {% if page_obj.has_next %}
+    <a href="?{% if query %}q={{ query }}&{% endif %}page={{ page_obj.next_page_number }}">Next</a>
+    <a href="?{% if query %}q={{ query }}&{% endif %}page={{ page_obj.paginator.num_pages }}">Last</a>
+    {% endif %}
+</div>
+
+<br>
+
+
+<!-- create new post -->
+<a href="{% url 'create_post' %}">Create new a post</a>
+{% endblock content %}

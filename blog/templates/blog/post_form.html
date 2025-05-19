@@ -1,5 +1,14 @@
-<h1>Create/Edit Post</h1>
-<form method="post">
-  {% csrf_token %} {{ form.as_p }}
-  <button type="submit">Submit</button>
-</form>
+{% extends 'blog/base.html' %}
+{% load static %}
+{% block content %}
+<h2 class="form-title">
+  {% if form.instance.pk %}Edit{% else %}Create{% endif %} Post
+</h2>
+<div class="form-container">
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %} {{ form.as_p }}
+    <button type="submit">Good</button>
+  </form>
+</div>
+
+{% endblock content %}
